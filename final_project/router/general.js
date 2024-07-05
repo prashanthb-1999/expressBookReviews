@@ -24,14 +24,23 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
   //Write your code here
-  return res.status(200).json(books);
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => resolve(books), 400);
+  });
+
+  promise.then((result) => {
+    return res.status(200).json({ books: result });
+  });
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
-  const { isbn } = req.params;
-  const book = books[req.params.isbn];
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => resolve(books[req.params.isbn]), 600);
+  });
+
+  const book = await promise;
 
   if (!book) {
     return res.status(404).json({ message: "Book not found" });
@@ -43,10 +52,14 @@ public_users.get('/isbn/:isbn',function (req, res) {
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   //Write your code here
-  const { author } = req.params;
-  const booksByAuthor = Object.values(books).filter(
-    (b) => b.author === author
-  );
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const booksByAuthor = Object.values(books).filter(
+        (b) => b.author === author
+      );
+      resolve(booksByAuthor);
+    }, 600);
+  });
 
   if (booksByAuthor.length === 0) {
     return res.status(404).json({ message: "No books found by this author" });
@@ -59,7 +72,16 @@ public_users.get('/author/:author',function (req, res) {
 public_users.get('/title/:title',function (req, res) {
   //Write your code here
   const { title } = req.params;
-  const booksByTitle = Object.values(books).filter((b) => b.title === title);
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const booksByTitle = Object.values(books).filter(
+        (b) => b.title === title
+      );
+      return resolve(booksByTitle);
+    }, 600);
+  });
+
+  const booksByTitle = await promise;
 
   if (booksByTitle.length === 0) {
     return res.status(404).json({ message: "No books found with this title" });
