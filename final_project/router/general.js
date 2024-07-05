@@ -31,7 +31,7 @@ public_users.get('/',function (req, res) {
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
   const { isbn } = req.params;
-  const book = books.find(b => b.isbn === isbn);
+  const book = books[req.params.isbn];
 
   if (!book) {
     return res.status(404).json({ message: "Book not found" });
@@ -44,7 +44,9 @@ public_users.get('/isbn/:isbn',function (req, res) {
 public_users.get('/author/:author',function (req, res) {
   //Write your code here
   const { author } = req.params;
-  const booksByAuthor = books.filter(b => b.author === author);
+  const booksByAuthor = Object.values(books).filter(
+    (b) => b.author === author
+  );
 
   if (booksByAuthor.length === 0) {
     return res.status(404).json({ message: "No books found by this author" });
@@ -57,7 +59,7 @@ public_users.get('/author/:author',function (req, res) {
 public_users.get('/title/:title',function (req, res) {
   //Write your code here
   const { title } = req.params;
-  const booksByTitle = books.filter(b => b.title.toLowerCase().includes(title.toLowerCase()));
+  const booksByTitle = Object.values(books).filter((b) => b.title === title);
 
   if (booksByTitle.length === 0) {
     return res.status(404).json({ message: "No books found with this title" });
@@ -70,7 +72,7 @@ public_users.get('/title/:title',function (req, res) {
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
   const { isbn } = req.params;
-  const book = books.find(b => b.isbn === isbn);
+  const book = books[req.params.isbn];
 
   if (!book) {
     return res.status(404).json({ message: "Book not found" });
